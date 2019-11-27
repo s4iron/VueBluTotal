@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vuex@3.1.2/dist/vuex.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.0/css/bootstrap.min.css" integrity="sha384-SI27wrMjH3ZZ89r4o+fGIJtnzkAnFs3E4qz9DIYioCQ5l9Rd/7UAa8DHcaL8jkWt" crossorigin="anonymous">
+</head>
+<body>
+    <div id='app'>
+        <titulo></titulo>  
+    </div>
+    <script>
+        Vue.component('titulo',{
+            template://html
+            `
+                <div>
+                    <h1 :class="$store.state.fondo">numero {{$store.state.num}}</h1>
+                    <hijo></hijo>
+                </div>
+            `
+        })
+        Vue.component('hijo',{
+            template://html
+            `
+                <div>
+                    <button @click="$store.commit('sumar')">+</button>
+                    <button @click="$store.commit('restar')">-</button>
+                </div>
+            `
+        })
+        //config vuex
+        const store = new Vuex.Store({
+            state:{
+                num:10,
+                fondo:'bg-warning'
+            },
+            mutations:{
+                restar(){
+                    this.state.num --
+                    this.commit('color')
+                },
+                sumar(state){
+                    state.num ++
+                    this.commit('color')
+                },
+                color(state){
+                    if(state.num%2===0){
+                        state.fondo = 'bg-danger'
+                    }else{
+                        state.fondo = 'bg-success'
+                    }
+                }
+            }
+        })
+    
+        new Vue({
+            el:'#app',
+            store:store
+        })
+    </script>
+</body>
+</html>
