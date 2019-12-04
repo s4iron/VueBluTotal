@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vuex@3.1.2/dist/vuex.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.0/css/bootstrap.min.css" integrity="sha384-SI27wrMjH3ZZ89r4o+fGIJtnzkAnFs3E4qz9DIYioCQ5l9Rd/7UAa8DHcaL8jkWt" crossorigin="anonymous">
+</head>
+<body>
+    <div id='app'>
+        <titulo></titulo>  
+    </div>
+    <script>
+
+        Vue.component('titulo',{
+            template://html
+            `
+                <div>
+                    <h1 :class="$store.state.fondo">numero= {{num}}</h1>
+                    <h2>mi gati es {{yue}} </h2>
+                    <hijo></hijo>
+                </div>
+            `,
+            computed:{
+                ...Vuex.mapState(['num','yue'])
+            }
+        })
+        //___________________________________________________________________
+        Vue.component('hijo',{
+            template://html
+            `
+                <div>
+                    <button @click="sumar">+</button>
+                    <button @click="restar(3)">-</button>
+                    <h1 :class="$store.state.fondo2">numero= {{num}}</h1>
+                    <ul v-if="cursos.length > 0">
+                        <h1>cursos </h1>
+                        <li v-for='item of cursos'>{{item.nombre}} -> {{item.id}}</li>
+                    </ul>
+                    <ul v-else>
+                        no hay cursos
+                    </ul>
+                    <button @click="consultarCursos">Consulta</button>
+                </div>
+            `,
+            computed:{
+                ...Vuex.mapState(['num','yue','cursos'])
+            },
+            methods:{
+                ...Vuex.mapMutations(['sumar','restar']),
+                ...Vuex.mapActions(['consultarCursos'])
+            }
+        })
+
+        //config vuex
+        const store = new Vuex.Store({
+            state:{
+                num:10,
+                fondo:'bg-warning',
+                yue:'mama',
+                cursos:[]
+            },
+            mutations:{
+                restar(k,n){
+                    console.log(n)
+                    k.num -= n
+                    this.commit('color')
+                },
+                sumar(state){
+                    state.num ++
+                    this.commit('color')
+                    console.log(state.cursos)
+                    console.log([])
+                },
+                color(state){
+                    if(state.num%2===0){
+                        state.fondo = 'bg-danger'
+                        state.yue = 'mama'
+                        state.fondo2 = 'bg-success'
+                    }else{
+                        state.fondo = 'bg-success'
+                        state.yue = 'papa'
+                        state.fondo2 = 'bg-danger'
+                    }
+                },
+                llenarCursos(state,cursosAccion){
+                    state.cursos = cursosAccion
+                }
+            },
+            actions:{
+                consultarCursos: async function({commit}){
+                    console.log('hol')
+                    const data = await fetch("cursos.json")
+                    const cursos = await data.json()
+                    commit('llenarCursos',cursos)//llamo la mutacion
+                }
+            }
+        })
+    
+        new Vue({
+            el:'#app',
+            store:store
+        })
+    </script>
+</body>
+</html>
